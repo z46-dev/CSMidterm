@@ -4,4 +4,7 @@ export default class GameObject {
     width = 0;
     height = 0;
     color = "#000000";
+
+    roomX = 0;
+    roomY = 0;
 }

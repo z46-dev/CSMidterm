@@ -16,6 +16,7 @@ export default class Room {
     }
 
     draw() {
+        ctx.fillStyle = this.color;
         ctx.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
         this.objects.forEach(object => object.draw());
     }
