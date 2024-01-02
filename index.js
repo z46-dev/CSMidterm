@@ -1,4 +1,4 @@
-import { canvas, ctx, drawText } from "./lib/render.js";
+import { canvas, ctx, drawText, uiScale } from "./lib/render.js";
 import { World, GameObject } from "./shared/Objects.js";
 
 World.init();
@@ -21,7 +21,7 @@ player.addToRoom(World.getRoom(0, 0));
 
 const dragon = new GameObject();
 dragon.draw = dragon.drawDragon;
-dragon.addToRoom(World.getRoom(32, 32));
+dragon.addToRoom(World.getRoom(8, 13));
 
 function draw() {
     requestAnimationFrame(draw);
@@ -30,11 +30,12 @@ function draw() {
 
     ctx.save();
     ctx.translate(canvas.width / 2, canvas.height / 2);
-    ctx.scale(1, 1);
+    const scale = uiScale();
+    ctx.scale(scale, scale);
 
-    const roomsInView = 5;
+    const roomsInView = 17;
     const roomsOnSide = (roomsInView - 1) / 2;
-    const cellSize = 900 / roomsInView;
+    const cellSize = 750 / roomsInView;
 
     for (let x = player.roomX - roomsOnSide; x <= player.roomX + roomsOnSide; x++) {
         for (let y = player.roomY - roomsOnSide; y <= player.roomY + roomsOnSide; y++) {
@@ -50,26 +51,26 @@ function draw() {
                 ctx.translate(xx, yy);
                 ctx.scale(cellSize / room.width, cellSize / room.height);
                 room.draw();
-                ctx.textAlign = "left";
-                ctx.textBaseline = "top";
-                drawText(`(${X}, ${Y})`, -cellSize/2 + 5, -cellSize/2 + 5, 20, "#FFFFFF");
+                // ctx.textAlign = "left";
+                // ctx.textBaseline = "top";
+                // drawText(`(${X}, ${Y})`, -cellSize * .1, -cellSize * .1, 20 * (1 / (cellSize / room.width)), "#FFFFFF");
                 ctx.restore();
             }
         }
     }
 
-    ctx.beginPath();
-    for (let i = 0; i <= roomsInView; i++) {
-        const k = (i - 1) * cellSize - cellSize / 2;
-        const g = cellSize * 1.5;
-        ctx.moveTo(k, -g);
-        ctx.lineTo(k, g);
-        ctx.moveTo(-g, k);
-        ctx.lineTo(g, k);
-    }
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = "#FF0000";
-    ctx.stroke();
+    // ctx.beginPath();
+    // for (let i = 0; i <= roomsInView; i++) {
+    //     const k = (i - roomsOnSide) * cellSize - cellSize / 2;
+    //     const g = cellSize * (roomsInView / 2);
+    //     ctx.moveTo(k, -g);
+    //     ctx.lineTo(k, g);
+    //     ctx.moveTo(-g, k);
+    //     ctx.lineTo(g, k);
+    // }
+    // ctx.lineWidth = 2;
+    // ctx.strokeStyle = "#FF0000";
+    // ctx.stroke();
 
     ctx.restore();
 }

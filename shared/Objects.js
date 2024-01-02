@@ -1,14 +1,33 @@
+import quickNoise from "../lib/noise.js";
 import { ctx, mixColors } from "../lib/render.js";
 
 export class World {
-    static width = 64;
-    static height = 64;
+    static width = 32;
+    static height = 32;
 
-    static colors = ["#AAAADD", "#DDAAAA", "#AADDAA", "#DDDDDD"];
+    static palette = {
+        black: "#000000",
+        water: "#1eaefb",
+        sand: "#fff5c1",
+        grass: "#76ef7c",
+        forest: "#16b58d",
+        snow: "#ffffff",
+        ice: "#b3e1ff",
+        mountain: "#b3b3b3",
+        redSand: "#ff7f7f"
+    };
 
-    static dist(x1, y1, x2, y2) {
-        return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
-    }
+    static standardColors = [
+        [-1, -.9, mixColors(World.palette.water, World.palette.black, .5)],
+        [-.9, -.75, mixColors(World.palette.water, World.palette.black, .25)],
+        [-.75, -.5, World.palette.water],
+        [-.5, -.25, mixColors(World.palette.sand, World.palette.black, .25)],
+        [-.25, 0, World.palette.sand],
+        [0, .5, mixColors(World.palette.grass, World.palette.black, .25)],
+        [.5, .75, World.palette.grass],
+        [.75, 1, mixColors(World.palette.forest, World.palette.black, .25)],
+        [1, 1, World.palette.forest]
+    ];
 
     /**
      * @type {Room[]}
@@ -16,22 +35,8 @@ export class World {
     static rooms = [];
 
     static init() {
-        const colorSpaces = [];
-
-        for (let i = 0; i < World.colors.length; i++) {
-            let x, y;
-
-            do {
-                x = Math.floor(Math.random() * World.width);
-                y = Math.floor(Math.random() * World.height);
-            } while (colorSpaces.some(space => World.dist(x, y, space.x, space.y) < World.width / 5));
-
-            colorSpaces.push({
-                x: x,
-                y: y,
-                color: World.colors[i]
-            });
-        }
+        const noise = quickNoise.create((new Array(256)).fill(0).map((_, i) => i).sort(() => Math.random() - .5));
+        const seed = Math.random();
 
         for (let i = 0; i < World.width * World.height; i++) {
             const room = new Room();
@@ -40,10 +45,14 @@ export class World {
             room.x = i % World.width;
             room.y = Math.floor(i / World.width);
 
-            const sorted = colorSpaces.sort((a, b) => World.dist(room.x, room.y, a.x, a.y) - World.dist(room.x, room.y, b.x, b.y));
-            const d0 = World.dist(room.x, room.y, sorted[0].x, sorted[0].y);
-            const d1 = World.dist(room.x, room.y, sorted[1].x, sorted[1].y);
-            room.color = mixColors(sorted[0].color, sorted[1].color, d0 / (d0 + d1));
+            const myNoise = noise(room.x / 10, room.y / 10, seed);
+
+            for (const [min, max, c] of World.standardColors) {
+                if (myNoise >= min && myNoise <= max) {
+                    room.color = c;
+                    break;
+                }
+            }
 
             World.rooms.push(room);
         }
