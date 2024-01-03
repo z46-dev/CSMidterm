@@ -20,6 +20,18 @@ function setWorld(x, y, value) {
     world[y * 10 + x] = value;
 }
 
+function getDisplayNumber(number) {
+    if (number < 0) {
+        return 10;
+    }
+
+    if (number > 9) {
+        return 1;
+    }
+
+    return number + 1;
+}
+
 for (let i = 0; i < 100; i ++) {
     world[i] = new Room();
     world[i].width = 300;
@@ -41,7 +53,9 @@ function draw() {
 
     for (let x = player.roomX - 1; x <= player.roomX + 1; x ++) {
         for (let y = player.roomY - 1; y <= player.roomY + 1; y ++) {
-            const room = getWorld(x, y);
+            const X = getDisplayNumber(x);
+            const Y = getDisplayNumber(y);
+            const room = getWorld(X - 1, Y - 1);
             if (room) {
                 const xx = (x - player.roomX) * 300;
                 const yy = (y - player.roomY) * 300;
@@ -49,7 +63,7 @@ function draw() {
                 ctx.save();
                 ctx.translate(xx, yy);
                 room.draw();
-                drawText(`${x}, ${y}`, 0, 0, 50, "#FFFFFF");
+                drawText(`${X}, ${Y}`, 0, 0, 50, "#FFFFFF");
                 ctx.restore();
             }
         }
@@ -80,6 +94,15 @@ window.addEventListener("keydown", event => {
             break;
     }
 
-    player.roomX = Math.max(0, Math.min(9, player.roomX));
-    player.roomY = Math.max(0, Math.min(9, player.roomY));
+    if (player.roomX < 0) {
+        player.roomX = 9;
+    } else if (player.roomX > 9) {
+        player.roomX = 0;
+    }
+
+    if (player.roomY < 0) {
+        player.roomY = 9;
+    } else if (player.roomY > 9) {
+        player.roomY = 0;
+    }
 });
