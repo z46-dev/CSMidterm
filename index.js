@@ -63,11 +63,25 @@ function draw() {
                 ctx.save();
                 ctx.translate(xx, yy);
                 room.draw();
-                drawText(`${X}, ${Y}`, 0, 0, 50, "#FFFFFF");
+                ctx.textAlign = "left";
+                ctx.textBaseline = "top";
+                drawText(`(${X}, ${Y})`, -145, -145, 15, "#FFFFFF");
                 ctx.restore();
             }
         }
     }
+
+    ctx.beginPath();
+    for (let i = 0; i < 3; i ++) {
+        const k = (i - 1) * 300;
+        ctx.moveTo(k, -450);
+        ctx.lineTo(k, 450);
+        ctx.moveTo(-450, k);
+        ctx.lineTo(450, k);
+    }
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "#FF0000";
+    ctx.stroke();
 
     ctx.restore();
 }
@@ -81,15 +95,19 @@ main();
 window.addEventListener("keydown", event => {
     switch (event.key) {
         case "ArrowUp":
+        case "w":
             player.roomY --;
             break;
         case "ArrowDown":
+        case "s":
             player.roomY ++;
             break;
         case "ArrowLeft":
+        case "a":
             player.roomX --;
             break;
         case "ArrowRight":
+        case "d":
             player.roomX ++;
             break;
     }
