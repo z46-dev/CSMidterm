@@ -33,7 +33,7 @@ function draw() {
     const scale = uiScale();
     ctx.scale(scale, scale);
 
-    const roomsInView = 17;
+    const roomsInView = 33;
     const roomsOnSide = (roomsInView - 1) / 2;
     const cellSize = 750 / roomsInView;
 

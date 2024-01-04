@@ -2,8 +2,8 @@ import quickNoise from "../lib/noise.js";
 import { ctx, mixColors } from "../lib/render.js";
 
 export class World {
-    static width = 32;
-    static height = 32;
+    static width = 128;
+    static height = 128;
 
     static palette = {
         black: "#000000",
